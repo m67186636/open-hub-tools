@@ -1,0 +1,15 @@
+{
+  "id": "codex-cli",
+  "name": "Codex CLI",
+  "vendor": "OpenAI",
+  "icon": "codex-color",
+  "description": "OpenAI's lightweight coding agent that runs in your terminal",
+  "stars": 18200,
+  "downloads": 52000,
+  "links": [
+    { "type": "website", "label": "Official Site", "url": "https://openai.com/codex" },
+    { "type": "repo", "label": "GitHub", "url": "https://github.com/openai/codex" },
+    { "type": "docs", "label": "Documentation", "url": "https://developers.openai.com/codex" }
+  ],
+  "tags": ["AI", "CLI", "Development"]
+}
