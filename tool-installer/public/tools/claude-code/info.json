@@ -1,0 +1,15 @@
+{
+  "id": "claude-code",
+  "name": "Claude Code",
+  "vendor": "Anthropic",
+  "icon": "claudecode-color",
+  "description": "An agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster",
+  "stars": 25600,
+  "downloads": 89000,
+  "links": [
+    { "type": "website", "label": "Official Site", "url": "https://www.anthropic.com/claude-code" },
+    { "type": "repo", "label": "GitHub", "url": "https://github.com/anthropics/claude-code" },
+    { "type": "docs", "label": "Documentation", "url": "https://docs.anthropic.com/claude-code" }
+  ],
+  "tags": ["AI", "CLI", "Coding Assistant"]
+}

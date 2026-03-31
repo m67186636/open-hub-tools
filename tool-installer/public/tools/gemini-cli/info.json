@@ -1,0 +1,15 @@
+{
+  "id": "gemini-cli",
+  "name": "Gemini CLI",
+  "vendor": "Google",
+  "icon": "gemini-color",
+  "description": "An open-source AI agent that brings the power of Gemini directly into your terminal.",
+  "stars": 28500,
+  "downloads": 95000,
+  "links": [
+    { "type": "repo", "label": "GitHub", "url": "https://github.com/google-gemini/gemini-cli" },
+    { "type": "docs", "label": "Documentation", "url": "https://geminicli.com/docs/" },
+    { "type": "website", "label": "Google AI", "url": "https://geminicli.com/" }
+  ],
+  "tags": ["ai", "cli", "gemini", "google", "agent", "terminal"]
+}
