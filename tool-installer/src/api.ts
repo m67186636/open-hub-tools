@@ -31,11 +31,22 @@ export async function loadTools(): Promise<Tool[]> {
   return tools
 }
 
-export function getInstallCommand(tool: Tool, platform: 'windows' | 'unix'): string {
+export function getInstallCommand(tool: Tool, platform: 'windows' | 'unix', useModelHub: boolean = true): string {
   const baseUrl = window.location.origin + import.meta.env.BASE_URL
-  if (platform === 'windows') {
-    return `irm ${baseUrl}tools/${tool.id}/install.ps1 | iex`
+  
+  if (useModelHub) {
+    // 固定 model-hub 中转站，直接运行脚本
+    if (platform === 'windows') {
+      return `irm ${baseUrl}tools/${tool.id}/install.ps1 | iex`
+    } else {
+      return `curl -fsSL ${baseUrl}tools/${tool.id}/install.sh | sudo bash`
+    }
   } else {
-    return `curl -fsSL ${baseUrl}tools/${tool.id}/install.sh | bash`
+    // 交互询问模式：先下载脚本，手动运行时会询问 BASE_URL
+    if (platform === 'windows') {
+      return `irm ${baseUrl}tools/${tool.id}/install-custom.ps1 | iex`
+    } else {
+      return `curl -fsSL ${baseUrl}tools/${tool.id}/install-custom.sh | sudo bash`
+    }
   }
 }

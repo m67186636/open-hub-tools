@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import type { Tool } from '../types'
 import { getInstallCommand } from '../api'
 
@@ -10,6 +10,10 @@ const props = defineProps<{
 const showModal = ref(false)
 const copied = ref(false)
 const platform = ref<'windows' | 'unix'>('windows')
+const useModelHub = ref(true)
+const showFaq = ref(false)
+
+const STORAGE_KEY = 'tool-installer-use-modelhub'
 
 function detectPlatform() {
   const ua = navigator.userAgent.toLowerCase()
@@ -17,10 +21,22 @@ function detectPlatform() {
   return 'unix'
 }
 
-platform.value = detectPlatform()
+onMounted(() => {
+  platform.value = detectPlatform()
+  // 从 localStorage 加载勾选状态
+  const saved = localStorage.getItem(STORAGE_KEY)
+  if (saved !== null) {
+    useModelHub.value = saved === 'true'
+  }
+})
+
+// 保存勾选状态到 localStorage
+watch(useModelHub, (val) => {
+  localStorage.setItem(STORAGE_KEY, String(val))
+})
 
 async function copyCommand() {
-  const cmd = getInstallCommand(props.tool, platform.value)
+  const cmd = getInstallCommand(props.tool, platform.value, useModelHub.value)
   await navigator.clipboard.writeText(cmd)
   copied.value = true
   setTimeout(() => (copied.value = false), 2000)
@@ -118,14 +134,36 @@ const linkIcons: Record<string, string> = {
               Linux/Mac
             </button>
           </div>
+
+          <label class="modelhub-checkbox">
+            <input type="checkbox" v-model="useModelHub" />
+            <span>自动配置 model-hub 中转站</span>
+          </label>
           
           <div class="install-cmd">
-            <code>{{ getInstallCommand(tool, platform) }}</code>
+            <code>{{ getInstallCommand(tool, platform, useModelHub) }}</code>
           </div>
 
           <button class="copy-btn" @click="copyCommand">
             {{ copied ? '✅ Copied!' : '📋 Copy Command' }}
           </button>
+
+          <!-- Windows FAQ -->
+          <div v-if="platform === 'windows'" class="faq-section">
+            <button class="faq-toggle" @click="showFaq = !showFaq">
+              <span class="faq-icon">{{ showFaq ? '▼' : '▶' }}</span>
+              常见问题
+            </button>
+            <div v-if="showFaq" class="faq-content">
+              <div class="faq-item">
+                <div class="faq-question">Q: 提示"无法加载文件...因为在此系统上禁止运行脚本"</div>
+                <div class="faq-answer">
+                  <p>需要修改 PowerShell 执行策略。以管理员身份运行 PowerShell，执行：</p>
+                  <code class="faq-code">Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -382,5 +420,90 @@ const linkIcons: Record<string, string> = {
 
 .copy-btn:hover {
   background: #1d4ed8;
+}
+
+/* Checkbox */
+.modelhub-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.modelhub-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+/* FAQ Section */
+.faq-section {
+  margin-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.faq-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.faq-toggle:hover {
+  color: #374151;
+}
+
+.faq-icon {
+  font-size: 0.7rem;
+}
+
+.faq-content {
+  margin-top: 12px;
+}
+
+.faq-item {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.faq-question {
+  font-weight: 500;
+  color: #111827;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.faq-answer {
+  color: #4b5563;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.faq-answer p {
+  margin-bottom: 8px;
+}
+
+.faq-code {
+  display: block;
+  background: #1f2937;
+  color: #10b981;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.8rem;
+  overflow-x: auto;
 }
 </style>
