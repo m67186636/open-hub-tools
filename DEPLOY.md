@@ -40,8 +40,16 @@
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
 | `VITE_API_BASE_URL` | `https://api.model-hub.cn` | API 服务地址，构建时替换脚本中的占位符 |
+| `VITE_BAIDU_ANALYTICS_ID` | _（空）_ | 百度统计站点 ID，不设置则不启用统计 |
 
-> **注意**：如果不设置 `VITE_API_BASE_URL`，将使用默认值 `https://api.model-hub.cn`
+> **注意**：
+> - 如果不设置 `VITE_API_BASE_URL`，将使用默认值 `https://api.model-hub.cn`
+> - 如果不设置 `VITE_BAIDU_ANALYTICS_ID`，不会插入百度统计代码
+
+**百度统计配置**：
+1. 登录 [百度统计](https://tongji.baidu.com/)
+2. 创建新站点，获取统计代码中的 ID（`hm.js?` 后的字符串）
+3. 在 Cloudflare Pages 环境变量中设置 `VITE_BAIDU_ANALYTICS_ID=你的统计ID`
 
 ### 1.4 自动部署
 
@@ -160,7 +168,9 @@ pnpm dev
 
 1. `vue-tsc -b` - TypeScript 类型检查
 2. `vite build` - 打包静态资源到 `dist/`
-3. `node replace-env.js` - 将脚本中的 `__API_BASE_URL__` 替换为环境变量值或默认值
+3. `node replace-env.js` - 环境变量替换：
+   - 将脚本中的 `__API_BASE_URL__` 替换为环境变量值或默认值
+   - 将 `index.html` 中的百度统计占位符替换为实际代码（如已配置）
 
 ---
 
